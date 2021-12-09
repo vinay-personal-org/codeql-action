@@ -768,7 +768,7 @@ async function getCodeQLForCmd(
       );
 
       // Run trace command
-      await runTool(
+      await toolrunnerErrorCatcher(
         cmd,
         [
           "database",
@@ -777,7 +777,8 @@ async function getCodeQLForCmd(
           databasePath,
           "--",
           traceCommand,
-        ]
+        ],
+        errorMatchers
       );
     },
     async finalizeDatabase(
