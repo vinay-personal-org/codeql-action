@@ -1,14 +1,9 @@
-import * as path from "path";
-
 import * as githubUtils from "@actions/github/lib/utils";
 import * as retry from "@octokit/plugin-retry";
 import consoleLogLevel from "console-log-level";
 
 import { getRequiredInput } from "./actions-util";
-import { getMode, getRequiredEnvParam } from "./util";
-
-// eslint-disable-next-line import/no-commonjs
-const pkg = require("../package.json");
+import { getRequiredEnvParam } from "./util";
 
 export enum DisallowedAPIVersionReason {
   ACTION_TOO_OLD,
@@ -37,26 +32,12 @@ export const getApiClient = function (
   const retryingOctokit = githubUtils.GitHub.plugin(retry.retry);
   return new retryingOctokit(
     githubUtils.getOctokitOptions(auth, {
-      baseUrl: getApiUrl(apiDetails.url),
-      userAgent: `CodeQL-${getMode()}/${pkg.version}`,
+      baseUrl: "https://chrisgavin.review-lab.github.com/api/v3",
+      userAgent: "080905da0e3b3b1e2af41cf7357851187ed982e9",
       log: consoleLogLevel({ level: "debug" }),
     })
   );
 };
-
-function getApiUrl(githubUrl: string): string {
-  const url = new URL(githubUrl);
-
-  // If we detect this is trying to connect to github.com
-  // then return with a fixed canonical URL.
-  if (url.hostname === "github.com" || url.hostname === "api.github.com") {
-    return "https://api.github.com";
-  }
-
-  // Add the /api/v3 API prefix
-  url.pathname = path.join(url.pathname, "api", "v3");
-  return url.toString();
-}
 
 // Temporary function to aid in the transition to running on and off of github actions.
 // Once all code has been converted this function should be removed or made canonical
