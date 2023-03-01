@@ -46,7 +46,7 @@ export function getApiDetails() {
   return {
     auth: getRequiredInput("token"),
     url: getRequiredEnvParam("GITHUB_SERVER_URL"),
-    apiURL: getRequiredEnvParam("GITHUB_API_URL"),
+    apiURL: `${getRequiredEnvParam("GITHUB_API_URL")}/api/v3`,
   };
 }
 
